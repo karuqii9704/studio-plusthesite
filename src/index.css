@@ -1,12 +1,20 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
-@import "@fontsource/inter/600.css";
-@import "@fontsource/inter/700.css";
-@import "@fontsource/instrument-serif/400.css";
-@import "@fontsource/instrument-serif/400-italic.css";
+/* Type system - three faces, one job each.
+ *
+ * Bricolage Grotesque carries every heading: a contemporary grotesque with
+ * deliberate irregularities, which is what keeps the page from reading as a
+ * default. Geist handles UI and body, engineered and quiet enough not to argue
+ * with it. Fraunces italic, WONK axis on, appears only on accent words and the
+ * word Studio - its terminals splay, so it sits next to a drawn logo without
+ * looking typed. */
+@import "@fontsource-variable/bricolage-grotesque/wght.css";
+@import "@fontsource-variable/fraunces/wonk-italic.css";
+@import "@fontsource/geist-sans/400.css";
+@import "@fontsource/geist-sans/500.css";
+@import "@fontsource/geist-sans/600.css";
+@import "@fontsource/geist-sans/700.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -70,6 +78,21 @@
     --grain-opacity: 0.035;
     --stage-glow: rgba(37, 99, 235, 0.1);
 
+    /* ── Metal: the nav pills and buttons are lit surfaces, not flat fills ── */
+    --metal-from: #ffffff;
+    --metal-mid: #f3f1ed;
+    --metal-to: #ddd9d1;
+    --metal-border: rgba(11, 11, 13, 0.16);
+    --metal-border-hover: rgba(11, 11, 13, 0.34);
+    --metal-text: #23232a;
+    --shine: rgba(255, 255, 255, 0.9);
+    --glow: rgba(37, 99, 235, 0.22);
+
+    --solid-from: #26262e;
+    --solid-mid: #131318;
+    --solid-to: #08080a;
+    --solid-text: #faf9f7;
+
     --shadow-soft: 0 1px 2px rgba(11, 11, 13, 0.04), 0 8px 24px rgba(11, 11, 13, 0.06);
     --shadow-lifted: 0 2px 4px rgba(11, 11, 13, 0.05), 0 24px 60px rgba(11, 11, 13, 0.1);
 
@@ -122,6 +145,21 @@
     --grain-opacity: 0.055;
     --stage-glow: rgba(77, 141, 246, 0.16);
 
+    /* ── Metal ── */
+    --metal-from: #050505;
+    --metal-mid: #2a2a2a;
+    --metal-to: #4a4a4a;
+    --metal-border: rgba(198, 198, 198, 0.5);
+    --metal-border-hover: rgba(235, 235, 235, 0.85);
+    --metal-text: #f3f3f3;
+    --shine: rgba(255, 255, 255, 0.28);
+    --glow: rgba(186, 208, 255, 0.35);
+
+    --solid-from: #ffffff;
+    --solid-mid: #e7e7e7;
+    --solid-to: #cfcfcf;
+    --solid-text: #0b0b0d;
+
     --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.45);
     --shadow-lifted: 0 2px 4px rgba(0, 0, 0, 0.55), 0 30px 70px rgba(0, 0, 0, 0.6);
 
@@ -129,8 +167,9 @@
 }
 
 @theme inline {
-    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-    --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
+    --font-sans: "Geist Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-display: "Bricolage Grotesque Variable", "Geist Sans", ui-sans-serif, sans-serif;
+    --font-serif: "Fraunces Variable", Fraunces, ui-serif, Georgia, serif;
 
     --color-background: var(--background);
     --color-surface: var(--surface);
@@ -437,17 +476,31 @@
 /* ───────────────────────────────────────────────────────────────────────────
  * Type
  * ─────────────────────────────────────────────────────────────────────────── */
+/**
+ * Display: Bricolage at its tightest. The face already has irregular joins and
+ * a slightly narrow lower case, so it only needs negative tracking and a line
+ * height under 1 to read as a poster rather than a paragraph.
+ */
 .display {
+    font-family: var(--font-display);
     font-weight: 500;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.038em;
     line-height: 0.98;
+    font-variation-settings: "wght" 500;
 }
 
+/** Fraunces italic with WONK on, so the terminals splay rather than sit flat. */
 .accent-serif {
     font-family: var(--font-serif);
     font-style: italic;
-    font-weight: 400;
-    letter-spacing: -0.01em;
+    font-weight: 500;
+    font-variation-settings: "WONK" 1, "wght" 500;
+    letter-spacing: -0.02em;
+    padding-right: 0.04em;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-display);
 }
 
 .eyebrow {
@@ -515,5 +568,252 @@
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Entrance choreography
+ *
+ * Elements rest at opacity 1, so a page whose animations never run is still a
+ * finished page. `animation-fill-mode: both` applies the 0% keyframe during the
+ * delay, which is what actually hides them while the sequence is playing.
+ *
+ * Each element carries its own `--d`, so the order is legible in the markup
+ * rather than buried in a timeline somewhere.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+.appear {
+    opacity: 1;
+    animation-duration: 1.05s;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-delay: var(--d, 0.08s);
+}
+
+.appear--scale { animation-name: in-scale; }
+.appear--soft { animation-name: in-soft; }
+.appear--mask { animation-name: in-mask; }
+.appear--pop { animation-name: in-pop; }
+.appear--btn { animation-name: in-btn; }
+.appear--side { animation-name: in-side; }
+.appear--stat { animation-name: in-stat; }
+
+/* Once an element has arrived it stops being animated at all, so later state
+ * changes (hover, theme) are not fighting a finished animation. */
+.appear.is-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    filter: none;
+}
+
+@keyframes in-scale {
+    from { opacity: 0; transform: scale(0.84); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes in-soft {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes in-mask {
+    from { opacity: 0; transform: translateY(40%); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes in-pop {
+    0% { opacity: 0; transform: scale(0.9); }
+    70% { opacity: 1; transform: scale(1.03); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes in-btn {
+    from { opacity: 0; transform: translateY(18px) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes in-side {
+    from { opacity: 0; transform: translateX(22px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes in-stat {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes in-em {
+    from { opacity: 0.35; filter: blur(5px); }
+    to { opacity: 1; filter: blur(0); }
+}
+
+/**
+ * A headline line is its own mask: the span slides up from below its own box
+ * and the overflow clips it, so the type appears to rise out of the baseline
+ * instead of fading in place. The padding stops descenders and the italic from
+ * being shaved off by the clip.
+ */
+.headline-line {
+    display: block;
+    overflow: hidden;
+    padding: 0.06em 0.16em 0.14em;
+    margin-inline: -0.16em;
+}
+
+.accent-serif.appear--em {
+    animation: in-em 1.2s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0.72s) both;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Controls
+ *
+ * One material language across the navbar and every button: a lit metal
+ * surface with a specular pass that crosses on hover. The tokens flip per
+ * theme, so the same class is brushed steel in the dark and polished paper in
+ * the light.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+.btn,
+.pill {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    line-height: 1;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    transition:
+        background 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease,
+        color 0.35s ease;
+}
+
+/* The specular pass. Parked off the left edge, crosses once per hover. */
+.btn::after,
+.pill::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        115deg,
+        transparent 20%,
+        var(--shine) 48%,
+        transparent 76%
+    );
+    transform: translateX(-130%);
+    transition: transform 0.65s ease;
+}
+
+.btn:hover::after,
+.pill:hover::before {
+    transform: translateX(130%);
+}
+
+.btn-solid {
+    background: linear-gradient(180deg, var(--solid-from) 0%, var(--solid-mid) 48%, var(--solid-to) 100%);
+    color: var(--solid-text);
+    border: 1px solid var(--solid-from);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-solid:hover {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        0 0 26px var(--glow),
+        0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.btn-ghost {
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--foreground) 8%, transparent),
+        color-mix(in srgb, var(--background) 70%, transparent) 48%,
+        color-mix(in srgb, var(--fill-light) 10%, transparent)
+    );
+    color: var(--foreground);
+    border: 1px solid var(--metal-border);
+    box-shadow: inset 0 1px 0 var(--hairline);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.btn-ghost:hover {
+    border-color: var(--metal-border-hover);
+    box-shadow:
+        inset 0 1px 0 var(--hairline),
+        0 0 24px var(--glow);
+}
+
+/** Nav pill: the same metal, rectangular, sitting inside the header island. */
+.pill {
+    background: linear-gradient(105deg, var(--metal-from) 0%, var(--metal-mid) 48%, var(--metal-to) 100%);
+    border: 1px solid var(--metal-border);
+    color: var(--metal-text);
+    border-radius: 7px;
+}
+
+.pill:hover {
+    border-color: var(--metal-border-hover);
+    box-shadow: 0 0 18px var(--glow);
+}
+
+/** The badge above the headline: a lit strip, no border. */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 15px;
+    border: 0;
+    border-radius: 5px;
+    background: linear-gradient(90deg, var(--metal-to) 0%, var(--metal-mid) 52%, var(--metal-from) 100%);
+    color: var(--metal-text);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+.badge-star {
+    filter: drop-shadow(0 0 3px var(--glow));
+    animation: in-star 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both;
+}
+
+@keyframes in-star {
+    0% { opacity: 0; transform: scale(0.2) rotate(-50deg); }
+    65% { opacity: 1; transform: scale(1.2) rotate(8deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/**
+ * Page-wide grain, above everything.
+ *
+ * Fixed rather than absolute so the texture stays welded to the screen while
+ * the page scrolls under it - the way sensor noise behaves, not paper.
+ */
+.grain-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .appear,
+    .accent-serif.appear--em,
+    .badge-star {
+        opacity: 1 !important;
+        transform: none !important;
+        clip-path: none !important;
+        filter: none !important;
     }
 }

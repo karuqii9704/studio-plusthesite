@@ -10,6 +10,17 @@
 
 export const LOGO_VIEW_BOX = "0 0 668 292";
 
+/**
+ * The same lockup without the trailing dot.
+ *
+ * Measured, not guessed: the `s` outline ends at x=608, so anything narrower
+ * clips the terminal off the letter.
+ */
+export const WORD_VIEW_BOX = "0 0 608 292";
+
+/** Baseline of the glyph row inside the 292-unit box, for inline alignment. */
+export const LOGO_BASELINE = 224.6;
+
 /** Tight box around the plus mark alone - used by the 3D hero mark. */
 export const MARK_VIEW_BOX = "0 60 233 232";
 

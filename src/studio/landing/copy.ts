@@ -4,10 +4,13 @@ import type { ToolMarkName } from "./visuals";
 /**
  * Landing copy.
  *
- * Two conventions the renderers rely on:
- *   `{plus}`  is replaced with the animated plus. mark, so the brand name is
- *             always the logo and never the four letters.
- *   `accent`  is the one word per heading set in Instrument Serif italic.
+ * Every string goes through `withPlus()`, which understands three tokens:
+ *   {plus}    the animated plus. mark
+ *   {studio}  the Fraunces lockup of the word Studio
+ *   *word*    an accent word in Fraunces italic
+ *
+ * Headlines are arrays because each line is masked and revealed separately, so
+ * the break points are content, not a side effect of the container width.
  */
 
 export interface Advantage {
@@ -19,20 +22,16 @@ export interface Advantage {
 export interface LandingCopy {
     nav: { links: { label: string; href: string }[]; open: string; signIn: string };
     hero: {
-        eyebrow: string;
-        headingBefore: string;
-        headingAccent: string;
-        headingAfter: string;
-        subtitle: string;
+        badge: string;
+        lines: string[];
+        lede: string;
         primary: string;
         secondary: string;
         stats: { value: string; label: string }[];
     };
     edge: {
         eyebrow: string;
-        headingBefore: string;
-        headingAccent: string;
-        headingAfter: string;
+        heading: string;
         subtitle: string;
         advantages: Advantage[];
         ctaTitle: string;
@@ -48,18 +47,10 @@ export interface LandingCopy {
     };
     workspace: {
         eyebrow: string;
-        headingBefore: string;
-        headingAccent: string;
-        headingAfter: string;
+        heading: string;
         features: { title: string; body: string }[];
     };
-    start: {
-        headingBefore: string;
-        headingAccent: string;
-        subtitle: string;
-        primary: string;
-        secondary: string;
-    };
+    start: { heading: string; subtitle: string; primary: string; secondary: string };
     footer: { rights: string; links: { label: string; href: string }[] };
 }
 
@@ -77,12 +68,9 @@ const id: LandingCopy = {
         signIn: "Masuk",
     },
     hero: {
-        eyebrow: "Ruang kerja kreator",
-        headingBefore: "Satu studio. Dari ",
-        headingAccent: "ide",
-        headingAfter: " sampai tayang.",
-        subtitle:
-            "{plus} Studio menyatukan riset, perencanaan, produksi visual, dan distribusi di satu meja kerja. Dibuat untuk kreator dan tim kecil yang menggarap konten tiap hari.",
+        badge: "Ruang kerja AI untuk kreator",
+        lines: ["Dari *ide* ke tayang,", "tanpa pindah meja."],
+        lede: "{plus} {studio} menyatukan riset, perencanaan, produksi visual, dan distribusi di satu tempat. Dibuat untuk kreator dan tim kecil yang menggarap konten tiap hari.",
         primary: "Buka Studio",
         secondary: "Lihat cara kerjanya",
         stats: [
@@ -93,9 +81,7 @@ const id: LandingCopy = {
     },
     edge: {
         eyebrow: "Keunggulan",
-        headingBefore: "Kenapa kreator pindah ke ",
-        headingAccent: "{plus}",
-        headingAfter: " Studio",
+        heading: "Kenapa kreator pindah ke {plus} {studio}",
         subtitle:
             "Tool AI terpisah bikin kamu kerja dua kali: pindah tab, ulang konteks, tempel manual. Studio ini menyimpan semuanya di satu tempat, jadi arah kreatifmu tidak hilang di tengah jalan.",
         advantages: [
@@ -135,9 +121,7 @@ const id: LandingCopy = {
     },
     workspace: {
         eyebrow: "Workspace",
-        headingBefore: "Delapan tool, satu ",
-        headingAccent: "meja kerja",
-        headingAfter: "",
+        heading: "Semua kerjaan, satu *meja*",
         features: [
             {
                 title: "AI Planner",
@@ -158,15 +142,14 @@ const id: LandingCopy = {
         ],
     },
     start: {
-        headingBefore: "Nyalakan ",
-        headingAccent: "lampunya",
+        heading: "Nyalakan *lampunya*",
         subtitle:
             "Buka workspace, isi profil bisnis, dan dapatkan rencana campaign pertama dalam hitungan menit.",
         primary: "Buka Studio",
         secondary: "Sudah punya akun",
     },
     footer: {
-        rights: "{plus} Studio. Seluruh hak cipta dilindungi.",
+        rights: "{plus} {studio}. Seluruh hak cipta dilindungi.",
         links: [
             { label: "Privasi", href: "/privacy" },
             { label: "Ketentuan", href: "/terms" },
@@ -187,12 +170,9 @@ const en: LandingCopy = {
         signIn: "Sign in",
     },
     hero: {
-        eyebrow: "A workspace for creators",
-        headingBefore: "One studio. From ",
-        headingAccent: "idea",
-        headingAfter: " to airtime.",
-        subtitle:
-            "{plus} Studio puts research, planning, visual production, and distribution on one desk. Built for creators and small teams shipping content every day.",
+        badge: "An AI workspace for creators",
+        lines: ["From *idea* to airtime,", "without leaving the desk."],
+        lede: "{plus} {studio} puts research, planning, visual production, and distribution in one place. Built for creators and small teams shipping content every day.",
         primary: "Open Studio",
         secondary: "See how it works",
         stats: [
@@ -203,9 +183,7 @@ const en: LandingCopy = {
     },
     edge: {
         eyebrow: "Why it wins",
-        headingBefore: "Why creators move to ",
-        headingAccent: "{plus}",
-        headingAfter: " Studio",
+        heading: "Why creators move to {plus} {studio}",
         subtitle:
             "Scattered AI tools make you do the work twice: new tab, new context, manual paste. This studio keeps all of it in one place, so your creative direction survives the trip.",
         advantages: [
@@ -245,9 +223,7 @@ const en: LandingCopy = {
     },
     workspace: {
         eyebrow: "Workspace",
-        headingBefore: "Eight tools, one ",
-        headingAccent: "desk",
-        headingAfter: "",
+        heading: "Every task, one *desk*",
         features: [
             {
                 title: "AI Planner",
@@ -268,15 +244,14 @@ const en: LandingCopy = {
         ],
     },
     start: {
-        headingBefore: "Bring up the ",
-        headingAccent: "lights",
+        heading: "Bring up the *lights*",
         subtitle:
             "Open the workspace, fill in your business profile, and get a first campaign plan in minutes.",
         primary: "Open Studio",
         secondary: "I have an account",
     },
     footer: {
-        rights: "{plus} Studio. All rights reserved.",
+        rights: "{plus} {studio}. All rights reserved.",
         links: [
             { label: "Privacy", href: "/privacy" },
             { label: "Terms", href: "/terms" },

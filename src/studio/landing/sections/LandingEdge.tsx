@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { fadeUp, pressable } from "../motion";
 import { TOOL_MARKS } from "../visuals";
-import { AccentHeading, withPlus } from "../text";
+import { withPlus } from "../text";
 import { CONTACT_EMAIL } from "@/lib/site";
 import type { Advantage, LandingCopy } from "../copy";
 
@@ -61,14 +61,12 @@ export function LandingEdge({
                     {copy.edge.eyebrow}
                 </motion.p>
 
-                <motion.div {...fadeUp(0.06)}>
-                    <AccentHeading
-                        before={copy.edge.headingBefore}
-                        accent={copy.edge.headingAccent}
-                        after={copy.edge.headingAfter}
-                        className="display mt-6 max-w-3xl text-balance text-[clamp(2rem,4.6vw,3.75rem)]"
-                    />
-                </motion.div>
+                <motion.h2
+                    {...fadeUp(0.06)}
+                    className="display mt-6 max-w-3xl text-balance text-[clamp(2rem,4.6vw,3.75rem)]"
+                >
+                    {withPlus(copy.edge.heading)}
+                </motion.h2>
 
                 <motion.p
                     {...fadeUp(0.12)}
@@ -110,10 +108,10 @@ export function LandingEdge({
                             initial="rest"
                             whileHover="hover"
                             whileTap="tap"
-                            className="group inline-flex items-center gap-2 rounded-full bg-foreground py-3 pl-6 pr-3 text-sm font-semibold text-background"
+                            className="btn btn-solid group h-12 rounded-full pl-6 pr-2.5 text-sm"
                         >
                             {copy.edge.ctaPrimary}
-                            <span className="grid h-7 w-7 place-items-center rounded-full bg-background/15 transition-transform duration-500 ease-out group-hover:rotate-45">
+                            <span className="grid h-7 w-7 place-items-center rounded-full bg-current/15 transition-transform duration-500 ease-out group-hover:rotate-45">
                                 <ArrowUpRight className="h-3.5 w-3.5" />
                             </span>
                         </motion.button>

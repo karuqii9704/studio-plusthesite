@@ -1,5 +1,6 @@
 import { useLocale } from "@/i18n/I18nProvider";
 import { LANDING_COPY } from "./copy";
+import { useAppear } from "./useAppear";
 import { LandingNav } from "./sections/LandingNav";
 import { LandingHero } from "./sections/LandingHero";
 import { LandingEdge } from "./sections/LandingEdge";
@@ -26,8 +27,13 @@ export function StudioLanding({
     const copy = LANDING_COPY[locale] ?? LANDING_COPY.id;
     const start = () => onStart();
 
+    useAppear();
+
     return (
         <div className="min-h-screen bg-background font-sans text-foreground">
+            {/* Grain rides above everything, welded to the screen. */}
+            <div className="grain-overlay" aria-hidden="true" />
+
             <LandingNav copy={copy} onSignIn={onLoginClick} onStart={start} />
             <main>
                 <LandingHero copy={copy} onStart={start} />

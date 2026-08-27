@@ -12,6 +12,8 @@ process in front for the Gemini proxy and static hosting.
 server/index.js             Express: /api/ai proxy + static host for dist/
 src/index.css               The whole design system - tokens, palette, surfaces
 src/components/PlusLogo.tsx The animated mark, wordmark, and inline word
+src/components/StudioWord.tsx The word "Studio" as a drawn lockup
+src/components/brandText.tsx {plus} / {studio} / *accent* token rendering
 src/studio/landing/         Public landing page
   copy.ts                   All strings, both locales, with {plus} tokens
   visuals.tsx               Every image on the page, drawn in code
@@ -36,14 +38,41 @@ redefined there, which is what themes the ported dashboard without touching
 thousands of classNames. **To change the palette, edit that file and nothing
 else.**
 
-Fonts: Inter throughout, Instrument Serif italic for one accent word per
-heading.
+### Type
+
+Three faces, one job each - chosen against the Inter-plus-Instrument-Serif
+default that every AI-assisted site now shares:
+
+| Role | Face | Why |
+| --- | --- | --- |
+| Headings | Bricolage Grotesque (variable) | A contemporary grotesque with deliberate irregularities. It is the part that stops the page reading as a template. |
+| UI and body | Geist Sans | Engineered and quiet; it does not argue with the display face. |
+| Accents | Fraunces italic, WONK axis on | Terminals splay, so it sits beside a drawn logo without looking typed. Used only on accent words and the word Studio. |
+
+Copy marks accents with `*asterisks*`; `withPlus()` turns them into Fraunces.
+
+### Motion
+
+Entrance choreography is CSS, not JavaScript: elements carry `.appear`, a
+modifier for the keyframe, and their own `--d` delay, so the timeline is legible
+in the markup. `useAppear()` marks each element `.is-in` when it lands, and
+settles everything on a 4s timer if the animation never advances - a
+backgrounded tab or a stalled compositor must not leave the copy invisible.
+Elements rest at opacity 1, so a page whose animations never run is still a
+finished page.
+
+Controls share one material: lit metal with a specular pass that crosses on
+hover (`.btn`, `.pill`). The tokens flip per theme, so the same class is brushed
+steel in the dark and polished paper in the light.
 
 ### The plus. mark
 
-The brand name is a logo, never four typeset letters. Copy strings carry a
-`{plus}` token and `withPlus()` in `src/studio/landing/text.tsx` swaps it for
-`<PlusWord />`, which sits on the text baseline and scales with its sentence.
+The brand name is a logo, never four typeset letters. Copy strings carry
+`{plus}` and `{studio}` tokens, and `withPlus()` in
+`src/components/brandText.tsx` swaps them for `<PlusWord />` and
+`<StudioWord />`. The mark sits on the text baseline and scales with its
+sentence; its viewBox is measured from the outlines rather than guessed, because
+a box a few units narrow shaves the terminal off the `s`.
 
 All three surfaces animate. The mark is a plus sign, so a quarter turn lands it
 back on itself - every idle and hover state is built on 90-degree rotation, and

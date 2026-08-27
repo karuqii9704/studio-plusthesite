@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { fadeUp } from "../motion";
 import { ContactSheet } from "../visuals";
-import { AccentHeading, withPlus } from "../text";
+import { withPlus } from "../text";
 import type { LandingCopy } from "../copy";
 
 /**
@@ -22,14 +22,12 @@ export function LandingWorkspace({ copy }: { copy: LandingCopy }) {
                     {copy.workspace.eyebrow}
                 </motion.p>
 
-                <motion.div {...fadeUp(0.06)}>
-                    <AccentHeading
-                        before={copy.workspace.headingBefore}
-                        accent={copy.workspace.headingAccent}
-                        after={copy.workspace.headingAfter}
-                        className="display mt-6 max-w-3xl text-balance text-[clamp(2rem,4.6vw,3.75rem)]"
-                    />
-                </motion.div>
+                <motion.h2
+                    {...fadeUp(0.06)}
+                    className="display mt-6 max-w-3xl text-balance text-[clamp(2rem,4.6vw,3.75rem)]"
+                >
+                    {withPlus(copy.workspace.heading)}
+                </motion.h2>
 
                 <motion.div {...fadeUp(0.14)} className="mt-14">
                     <ContactSheet className="h-44 md:h-56" />

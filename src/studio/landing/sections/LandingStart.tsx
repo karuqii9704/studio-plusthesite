@@ -42,8 +42,7 @@ export function LandingStart({
                     {...fadeUp(0.08)}
                     className="display mt-9 text-balance text-[clamp(2.25rem,5.4vw,4.25rem)]"
                 >
-                    {withPlus(copy.start.headingBefore)}
-                    <span className="accent-serif">{copy.start.headingAccent}</span>
+                    {withPlus(copy.start.heading)}
                 </motion.h2>
 
                 <motion.p {...fadeUp(0.16)} className="mt-6 text-base leading-8 text-muted">
@@ -57,10 +56,10 @@ export function LandingStart({
                         initial="rest"
                         whileHover="hover"
                         whileTap="tap"
-                        className="group inline-flex items-center gap-2 rounded-full bg-foreground py-3.5 pl-7 pr-3 text-sm font-semibold text-background"
+                        className="btn btn-solid group h-12 rounded-full pl-7 pr-2.5 text-sm"
                     >
                         {copy.start.primary}
-                        <span className="grid h-7 w-7 place-items-center rounded-full bg-background/15 transition-transform duration-500 ease-out group-hover:rotate-45">
+                        <span className="grid h-7 w-7 place-items-center rounded-full bg-current/15 transition-transform duration-500 ease-out group-hover:rotate-45">
                             <ArrowUpRight className="h-3.5 w-3.5" />
                         </span>
                     </motion.button>
@@ -71,7 +70,7 @@ export function LandingStart({
                         initial="rest"
                         whileHover="hover"
                         whileTap="tap"
-                        className="liquid-glass rounded-full px-7 py-3.5 text-sm font-semibold text-foreground"
+                        className="btn btn-ghost h-12 rounded-full px-7 text-sm"
                     >
                         {copy.start.secondary}
                     </motion.button>

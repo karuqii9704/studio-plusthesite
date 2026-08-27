@@ -1,6 +1,12 @@
 import { motion, useReducedMotion, type Transition } from "framer-motion";
-import { Fragment, useId, type ReactNode } from "react";
-import { GLYPHS, LOGO_VIEW_BOX, MARK_D, MARK_VIEW_BOX } from "@/lib/logoPaths";
+import { useId } from "react";
+import {
+    GLYPHS,
+    LOGO_VIEW_BOX,
+    MARK_D,
+    MARK_VIEW_BOX,
+    WORD_VIEW_BOX,
+} from "@/lib/logoPaths";
 
 /**
  * The plus. mark and wordmark.
@@ -81,7 +87,7 @@ export function PlusWordmark({
 
     const svg = (
         <motion.svg
-            viewBox={LOGO_VIEW_BOX}
+            viewBox={withDot ? LOGO_VIEW_BOX : WORD_VIEW_BOX}
             role="img"
             aria-label={label}
             className={className}
@@ -155,11 +161,10 @@ export function PlusWord({
 }) {
     const reduced = useReducedMotion();
     const glyphs = withDot ? GLYPHS : GLYPHS.filter((g) => g.name !== "dot");
-    const width = withDot ? 668 : 560;
 
     return (
         <motion.svg
-            viewBox={`0 0 ${width} 292`}
+            viewBox={withDot ? LOGO_VIEW_BOX : WORD_VIEW_BOX}
             role="img"
             aria-label="plus"
             className={`inline-block align-baseline ${className}`}
@@ -200,23 +205,4 @@ export function PlusWord({
             ))}
         </motion.svg>
     );
-}
-
-const PLUS_TOKEN = "{plus}";
-
-/**
- * Swap every `{plus}` token in a copy string for the animated mark.
- *
- * The brand name is a logo, not a word, so it never gets typeset. Keeping the
- * swap here means copy files stay plain strings in both locales.
- */
-export function withPlus(text: string): ReactNode {
-    if (!text.includes(PLUS_TOKEN)) return text;
-
-    return text.split(PLUS_TOKEN).map((chunk, index, all) => (
-        <Fragment key={index}>
-            {chunk}
-            {index < all.length - 1 && <PlusWord />}
-        </Fragment>
-    ));
 }

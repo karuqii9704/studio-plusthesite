@@ -12,7 +12,8 @@ import {
     Wand2,
 } from "lucide-react";
 import { STUDIO_FAQ, STUDIO_TUTORIALS } from "@/lib/studioData";
-import { PlusWord, withPlus } from "@/components/PlusLogo";
+import { PlusWord } from "@/components/PlusLogo";
+import { withPlus } from "@/components/brandText";
 
 export const UserGuide: React.FC<{ onStartTour: (tab: string) => void }> = ({
     onStartTour,
