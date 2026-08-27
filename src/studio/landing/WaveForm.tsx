@@ -109,11 +109,12 @@ export function WaveForm({
         };
 
         const draw = (time: number) => {
-            const phase = drive
-                ? drive.get() * Math.PI * 2
-                : reduced
-                  ? 1.2
-                  : time * speed * Math.PI * 2;
+            // Scroll adds to the ambient drift rather than replacing it. A
+            // purely scroll-bound wave sits still whenever the reader does, and
+            // it only ever gets the slice of its range that overlaps the time
+            // the form is actually on screen - which reads as a static image.
+            const drift = reduced ? 1.2 : time * speed * Math.PI * 2;
+            const phase = drift + (drive ? drive.get() * Math.PI * 2 : 0);
 
             context.clearRect(0, 0, width, height);
             // Back of the twist first, then the face, so the crossing reads.

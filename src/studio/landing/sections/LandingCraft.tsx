@@ -89,8 +89,9 @@ export function LandingCraft({ copy }: { copy: LandingCopy }) {
         offset: ["start 0.92", "end 0.55"],
     });
 
-    // The wave crests as the statement reveals itself, so scrolling drives both.
-    const wavePhase = useTransform(scrollYProgress, [0, 1], [0, 0.85]);
+    // Scrolling adds about a turn on top of the wave's own drift, so the form
+    // crests as the statement lands without stalling when the reader stops.
+    const wavePhase = useTransform(scrollYProgress, [0, 1], [0, 1.1]);
     const waveOpacity = useTransform(scrollYProgress, [0, 0.3, 1], [0.3, 0.8, 0.6]);
 
     return (
