@@ -1,5 +1,5 @@
 import { motion, useReducedMotion, type Transition } from "framer-motion";
-import { useId } from "react";
+import { Fragment, useId, type ReactNode } from "react";
 import { GLYPHS, LOGO_VIEW_BOX, MARK_D, MARK_VIEW_BOX } from "@/lib/logoPaths";
 
 /**
@@ -200,4 +200,23 @@ export function PlusWord({
             ))}
         </motion.svg>
     );
+}
+
+const PLUS_TOKEN = "{plus}";
+
+/**
+ * Swap every `{plus}` token in a copy string for the animated mark.
+ *
+ * The brand name is a logo, not a word, so it never gets typeset. Keeping the
+ * swap here means copy files stay plain strings in both locales.
+ */
+export function withPlus(text: string): ReactNode {
+    if (!text.includes(PLUS_TOKEN)) return text;
+
+    return text.split(PLUS_TOKEN).map((chunk, index, all) => (
+        <Fragment key={index}>
+            {chunk}
+            {index < all.length - 1 && <PlusWord />}
+        </Fragment>
+    ));
 }

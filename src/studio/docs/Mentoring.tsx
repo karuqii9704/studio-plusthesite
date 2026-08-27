@@ -1,5 +1,6 @@
 import { Clock, Star, Users } from "lucide-react";
 import { ACADEMY_CLASSES } from "@/lib/studioData";
+import { PlusWord } from "@/components/PlusLogo";
 
 export const Mentoring = () => {
     return (
@@ -7,7 +8,7 @@ export const Mentoring = () => {
             <div className="flex items-end justify-between">
                 <div>
                     <h3 className="mb-2 text-3xl font-bold text-slate-800 dark:text-white">
-                        PLUS Pro Academy
+                        <PlusWord /> Pro Academy
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
                         Upgrade skill bisnis Anda dengan mentor kelas dunia.

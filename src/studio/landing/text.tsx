@@ -1,24 +1,6 @@
-import { Fragment, type ReactNode } from "react";
-import { PlusWord } from "@/components/PlusLogo";
+import { withPlus } from "@/components/PlusLogo";
 
-const TOKEN = "{plus}";
-
-/**
- * Swap every `{plus}` token in a copy string for the animated mark.
- *
- * The brand name is a logo, not a word, so it never gets typeset - this keeps
- * that rule in one place instead of scattering JSX through the copy file.
- */
-export function withPlus(text: string): ReactNode {
-    if (!text.includes(TOKEN)) return text;
-
-    return text.split(TOKEN).map((chunk, index, all) => (
-        <Fragment key={index}>
-            {chunk}
-            {index < all.length - 1 && <PlusWord />}
-        </Fragment>
-    ));
-}
+export { withPlus };
 
 /** A heading whose accent word is set in Instrument Serif italic. */
 export function AccentHeading({

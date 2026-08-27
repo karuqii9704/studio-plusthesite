@@ -12,6 +12,7 @@ import {
     Wand2,
 } from "lucide-react";
 import { STUDIO_FAQ, STUDIO_TUTORIALS } from "@/lib/studioData";
+import { PlusWord, withPlus } from "@/components/PlusLogo";
 
 export const UserGuide: React.FC<{ onStartTour: (tab: string) => void }> = ({
     onStartTour,
@@ -33,7 +34,7 @@ export const UserGuide: React.FC<{ onStartTour: (tab: string) => void }> = ({
                             Studio onboarding
                         </p>
                         <h2 className="mt-3 text-2xl font-semibold text-slate-900 dark:text-white">
-                            Jalur cepat untuk menguasai workspace PLUS
+                            Jalur cepat untuk menguasai workspace <PlusWord />
                         </h2>
                         <p className="mt-3 max-w-xl text-sm leading-7 text-slate-600 dark:text-slate-300">
                             Mulai dari tur interaktif, lanjut ke video singkat, lalu pakai FAQ ini
@@ -181,7 +182,7 @@ export const UserGuide: React.FC<{ onStartTour: (tab: string) => void }> = ({
                                 </button>
                                 {openFAQ === index ? (
                                     <div className="border-t border-slate-100 bg-slate-50 px-4 pb-4 pt-3 text-xs leading-7 text-slate-500 dark:border-white/5 dark:bg-black/20 dark:text-slate-400">
-                                        {item.a}
+                                        {withPlus(item.a)}
                                     </div>
                                 ) : null}
                             </div>

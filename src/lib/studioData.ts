@@ -47,7 +47,7 @@ export const STUDIO_TUTORIALS: VideoTutorial[] = [
 ];
 
 export const STUDIO_FAQ: FAQItem[] = [
-    { q: 'Apakah hasil gambar AI bebas copyright?', a: 'Ya, semua gambar yang dihasilkan oleh Generator PLUS bebas royalti dan milik Anda sepenuhnya untuk keperluan komersial.' },
+    { q: 'Apakah hasil gambar AI bebas copyright?', a: 'Ya, semua gambar yang dihasilkan oleh Generator {plus} bebas royalti dan milik Anda sepenuhnya untuk keperluan komersial.' },
     { q: 'Bagaimana cara AI menentukan jadwal posting?', a: 'AI menganalisis tren industri Anda dan perilaku audiens target (misal: Gen Z aktif malam hari) untuk menyarankan waktu terbaik.' },
     { q: 'Apakah saya bisa membatalkan langganan?', a: 'Tentu saja. Anda bisa membatalkan kapan saja melalui menu Settings, tanpa biaya tambahan.' },
 ];

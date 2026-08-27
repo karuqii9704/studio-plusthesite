@@ -1,4 +1,5 @@
 import { Layout, Monitor, Smartphone } from "lucide-react";
+import { PlusWord } from "@/components/PlusLogo";
 
 const desktopCards = [
     "Traffic overview",
@@ -21,7 +22,7 @@ export const UIMockups = () => (
                         UI library
                     </p>
                     <h3 className="mt-3 text-3xl font-semibold text-slate-900 dark:text-white">
-                        Visual direction untuk workspace PLUS
+                        Visual direction untuk workspace <PlusWord />
                     </h3>
                     <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
                         Bukan sekadar placeholder frame. Library ini menunjukkan ritme layout,
