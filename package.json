@@ -12,14 +12,13 @@
     "start": "node server/index.js"
   },
   "dependencies": {
-    "@fontsource/inter": "^5.3.0",
     "@fontsource/instrument-serif": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
     "@google/genai": "^1.41.0",
     "@supabase/supabase-js": "^2.108.1",
     "compression": "^1.8.1",
     "express": "^5.1.0",
     "framer-motion": "^12.23.12",
-    "hls.js": "^1.6.15",
     "lucide-react": "^0.564.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"

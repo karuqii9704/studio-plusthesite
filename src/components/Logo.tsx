@@ -1,4 +1,4 @@
-import { GLYPHS, LOGO_VIEW_BOX, MARK_D } from "@/lib/logoPaths";
+import { PlusWordmark } from "@/components/PlusLogo";
 
 const SIZES = {
     small: "w-16",
@@ -7,7 +7,7 @@ const SIZES = {
 } as const;
 
 const VARIANTS = {
-    dark: "text-black",
+    dark: "text-[#0b0b0d]",
     light: "text-white",
     auto: "text-foreground",
 } as const;
@@ -21,11 +21,10 @@ export type LogoProps = {
 };
 
 /**
- * plus. wordmark.
+ * plus. brand logo.
  *
- * The vector trace from the marketing site, flattened to a single ink colour -
- * the studio palette is monochrome, so the mark and the glyphs share one fill
- * and inherit it from `currentColor`.
+ * A thin wrapper that keeps the prop shape the ported dashboard and login
+ * already use, while the motion lives in PlusWordmark.
  */
 export default function Logo({
     variant = "auto",
@@ -33,25 +32,10 @@ export default function Logo({
     href,
     className = "",
 }: LogoProps) {
-    const mark = (
-        <svg
-            viewBox={LOGO_VIEW_BOX}
-            role="img"
-            aria-label="plus."
-            className={`h-auto ${SIZES[size]} ${VARIANTS[variant]} ${className}`}
-        >
-            <path d={MARK_D} fill="currentColor" />
-            {GLYPHS.map((glyph) => (
-                <path key={glyph.name} d={glyph.d} fill="currentColor" />
-            ))}
-        </svg>
-    );
-
-    if (!href) return mark;
-
     return (
-        <a href={href} aria-label="plus. studio" className="inline-flex">
-            {mark}
-        </a>
+        <PlusWordmark
+            href={href}
+            className={`h-auto ${SIZES[size]} ${VARIANTS[variant]} ${className}`}
+        />
     );
 }

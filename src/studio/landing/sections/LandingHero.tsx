@@ -1,116 +1,122 @@
-import { useState, type FormEvent } from "react";
-import { motion } from "framer-motion";
-import { AmbientVideo } from "../primitives";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import { fadeUp, pressable } from "../motion";
-import { HERO_VIDEO } from "../media";
+import { StageBackdrop, Aperture } from "../visuals";
+import { withPlus } from "../text";
 import type { LandingCopy } from "../copy";
-
-/** Neutral stand-in avatars: a silhouette on a grey disc, no external assets. */
-function AvatarStack() {
-    return (
-        <div className="flex -space-x-2" aria-hidden="true">
-            {[0.22, 0.16, 0.1].map((tone, index) => (
-                <span
-                    key={index}
-                    className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border-2 border-background"
-                    style={{ background: `rgba(255,255,255,${tone})` }}
-                >
-                    <svg viewBox="0 0 24 24" className="h-5 w-5 translate-y-0.5">
-                        <circle cx="12" cy="9" r="3.6" fill="rgba(255,255,255,0.55)" />
-                        <path
-                            d="M4.5 21c0-4.1 3.4-6.6 7.5-6.6s7.5 2.5 7.5 6.6z"
-                            fill="rgba(255,255,255,0.55)"
-                        />
-                    </svg>
-                </span>
-            ))}
-        </div>
-    );
-}
 
 export function LandingHero({
     copy,
     onStart,
 }: {
     copy: LandingCopy;
-    onStart: (email: string) => void;
+    onStart: () => void;
 }) {
-    const [email, setEmail] = useState("");
-
-    const handleSubmit = (event: FormEvent) => {
-        event.preventDefault();
-        onStart(email.trim());
-    };
+    const reduced = useReducedMotion();
 
     return (
         <section id="hero" className="relative min-h-screen overflow-hidden">
-            <AmbientVideo
-                src={HERO_VIDEO}
-                className="absolute inset-0 h-full w-full object-cover"
-            />
-            {/* Keeps the headline readable no matter which frame is on screen. */}
-            <div className="absolute inset-0 bg-background/45" />
-            <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-background to-transparent" />
+            <StageBackdrop />
 
-            <div className="relative z-10 mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center px-6 pb-20 pt-28 text-center md:pt-32">
-                <motion.div
-                    {...fadeUp(0)}
-                    className="flex items-center gap-3 text-sm text-muted"
-                >
-                    <AvatarStack />
-                    {copy.hero.social}
+            {/* The iris sits behind the headline, off-centre, as set dressing. */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0.86 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                className="pointer-events-none absolute right-[-18%] top-[8%] w-[62vw] max-w-[720px] opacity-[0.5] md:right-[-8%] md:top-[6%] md:w-[44vw]"
+                aria-hidden="true"
+            >
+                <Aperture className="h-full w-full text-foreground" />
+            </motion.div>
+
+            <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-24 pt-32 md:px-8">
+                <motion.div {...fadeUp(0)} className="flex items-center gap-3">
+                    <span className="relative flex h-1.5 w-1.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
+                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                    </span>
+                    <span className="eyebrow">{copy.hero.eyebrow}</span>
                 </motion.div>
 
                 <motion.h1
-                    {...fadeUp(0.1)}
-                    className="mt-7 text-5xl font-medium tracking-[-2px] md:text-7xl lg:text-8xl"
+                    {...fadeUp(0.08)}
+                    className="display mt-7 max-w-4xl text-balance text-[clamp(2.75rem,7.4vw,6.5rem)]"
                 >
                     {copy.hero.headingBefore}
-                    <span className="font-serif font-normal italic">
-                        {copy.hero.headingAccent}
-                    </span>
+                    <span className="accent-serif">{copy.hero.headingAccent}</span>
                     {copy.hero.headingAfter}
                 </motion.h1>
 
                 <motion.p
-                    {...fadeUp(0.2)}
-                    className="mt-6 max-w-2xl text-lg text-hero-subtitle"
+                    {...fadeUp(0.16)}
+                    className="mt-8 max-w-xl text-[1.0625rem] leading-8 text-muted"
                 >
-                    {copy.hero.subtitle}
+                    {withPlus(copy.hero.subtitle)}
                 </motion.p>
 
-                <motion.form
-                    {...fadeUp(0.3)}
-                    onSubmit={handleSubmit}
-                    className="liquid-glass mt-9 flex w-full max-w-lg items-center gap-2 rounded-full p-2"
-                >
-                    <label htmlFor="hero-email" className="sr-only">
-                        {copy.hero.emailPlaceholder}
-                    </label>
-                    <input
-                        id="hero-email"
-                        type="email"
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                        placeholder={copy.hero.emailPlaceholder}
-                        className="min-w-0 flex-1 bg-transparent px-5 py-3 text-sm text-foreground outline-none placeholder:text-muted"
-                    />
+                <motion.div {...fadeUp(0.24)} className="mt-10 flex flex-wrap items-center gap-3">
                     <motion.button
-                        type="submit"
+                        onClick={onStart}
                         variants={pressable}
                         initial="rest"
                         whileHover="hover"
                         whileTap="tap"
-                        className="shrink-0 rounded-full bg-foreground px-8 py-3 text-sm font-bold tracking-wide text-background"
+                        className="group inline-flex items-center gap-2 rounded-full bg-foreground py-3 pl-6 pr-3 text-sm font-semibold text-background"
                     >
-                        {copy.hero.cta}
+                        {copy.hero.primary}
+                        <span className="grid h-7 w-7 place-items-center rounded-full bg-background/15 transition-transform duration-500 ease-out group-hover:rotate-45">
+                            <ArrowUpRight className="h-3.5 w-3.5" />
+                        </span>
                     </motion.button>
-                </motion.form>
 
-                <motion.p {...fadeUp(0.4)} className="mt-4 text-xs text-muted">
-                    {copy.hero.note}
-                </motion.p>
+                    <motion.a
+                        href="#edge"
+                        variants={pressable}
+                        initial="rest"
+                        whileHover="hover"
+                        whileTap="tap"
+                        className="liquid-glass rounded-full px-6 py-3 text-sm font-semibold text-foreground"
+                    >
+                        {copy.hero.secondary}
+                    </motion.a>
+                </motion.div>
+
+                {/* Numbers, set on a hairline rule rather than in boxes. */}
+                <motion.dl
+                    {...fadeUp(0.34)}
+                    className="mt-16 grid max-w-2xl grid-cols-1 gap-px overflow-hidden rounded-2xl sm:grid-cols-3"
+                    style={{ background: "var(--border)" }}
+                >
+                    {copy.hero.stats.map((stat) => (
+                        <div key={stat.label} className="bg-background px-5 py-5">
+                            <dt className="text-2xl font-medium tracking-tight text-foreground">
+                                {stat.value}
+                            </dt>
+                            <dd className="mt-1.5 text-xs leading-5 text-muted">{stat.label}</dd>
+                        </div>
+                    ))}
+                </motion.dl>
             </div>
+
+            {!reduced && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.4, duration: 0.8 }}
+                    className="pointer-events-none absolute bottom-7 left-1/2 hidden -translate-x-1/2 md:block"
+                    aria-hidden="true"
+                >
+                    <motion.span
+                        animate={{ y: [0, 8, 0] }}
+                        transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+                        className="block h-9 w-px"
+                        style={{
+                            background:
+                                "linear-gradient(to bottom, transparent, var(--border-strong))",
+                        }}
+                    />
+                </motion.div>
+            )}
         </section>
     );
 }

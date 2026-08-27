@@ -2,18 +2,18 @@ import { useLocale } from "@/i18n/I18nProvider";
 import { LANDING_COPY } from "./copy";
 import { LandingNav } from "./sections/LandingNav";
 import { LandingHero } from "./sections/LandingHero";
-import { LandingShift } from "./sections/LandingShift";
-import { LandingMission } from "./sections/LandingMission";
-import { LandingSolution } from "./sections/LandingSolution";
-import { LandingCta } from "./sections/LandingCta";
+import { LandingEdge } from "./sections/LandingEdge";
+import { LandingCraft } from "./sections/LandingCraft";
+import { LandingWorkspace } from "./sections/LandingWorkspace";
+import { LandingStart } from "./sections/LandingStart";
 import { LandingFooter } from "./sections/LandingFooter";
 
 /**
  * The public face of the studio.
  *
- * Pinned to the dark palette regardless of the workspace theme - the whole
- * composition is built on video over pure black, and inverting it would read as
- * a different product. The theme toggle lives inside the dashboard.
+ * Follows the workspace theme in both directions - the lighting palette is
+ * built to invert, so light mode reads as a bright studio rather than a
+ * washed-out dark one.
  */
 export function StudioLanding({
     onStart,
@@ -24,20 +24,17 @@ export function StudioLanding({
 }) {
     const locale = useLocale();
     const copy = LANDING_COPY[locale] ?? LANDING_COPY.id;
+    const start = () => onStart();
 
     return (
-        <div className="dark min-h-screen bg-background font-sans text-foreground">
-            <LandingNav copy={copy} onSignIn={onLoginClick} />
+        <div className="min-h-screen bg-background font-sans text-foreground">
+            <LandingNav copy={copy} onSignIn={onLoginClick} onStart={start} />
             <main>
-                <LandingHero copy={copy} onStart={onStart} />
-                <LandingShift copy={copy} />
-                <LandingMission copy={copy} />
-                <LandingSolution copy={copy} />
-                <LandingCta
-                    copy={copy}
-                    onStart={() => onStart()}
-                    onSignIn={onLoginClick}
-                />
+                <LandingHero copy={copy} onStart={start} />
+                <LandingEdge copy={copy} onStart={start} />
+                <LandingCraft copy={copy} />
+                <LandingWorkspace copy={copy} />
+                <LandingStart copy={copy} onStart={start} onSignIn={onLoginClick} />
             </main>
             <LandingFooter copy={copy} />
         </div>
