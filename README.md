@@ -80,10 +80,23 @@ nothing ever settles where the mark cannot legitimately sit.
 
 ### Imagery
 
-There are no image or video files. The stage lighting, the camera iris, the film
-contact sheet, and the four tool marks are all drawn in `visuals.tsx`: they theme
-with light and dark for free, weigh a few kilobytes, and there is no third-party
-host to go dark on launch day.
+There are no image or video files. The stage lighting, the film contact sheet,
+and the four tool marks are drawn in `visuals.tsx`; the wave is a canvas in
+`WaveForm.tsx`. They theme with light and dark for free, weigh a few kilobytes,
+and there is no third-party host to go dark on launch day.
+
+The wave is a twisted ribbon painted as vertical slices: each column knows the
+centre of the band, its half-thickness, and how face-on the surface is there,
+and fills a soft gradient through it. Shading from the local slope is what makes
+a flat gradient read as a lit, solid form. It paints its first frame
+synchronously rather than waiting for `requestAnimationFrame`, which does not
+fire in a background tab - and unlike the CSS entrances there is no resting
+state to fall back on, so without that the wave would simply be absent.
+
+In the hero it is masked and then scrimmed back to the ground colour before it
+reaches the copy. The mask alone is not enough: how far the wave reaches depends
+on viewport height and the copy block does not, so on some screens the highlight
+lands at near-full opacity behind the headline.
 
 ## Running it
 

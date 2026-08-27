@@ -1,4 +1,4 @@
-import { motion, useReducedMotion, type MotionValue } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { CSSProperties } from "react";
 
 /**
@@ -56,99 +56,6 @@ export function StageBackdrop({ className = "" }: { className?: string }) {
                 }}
             />
         </div>
-    );
-}
-
-/* ───────────────────────────────────────────────────────────────────────────
- * Aperture
- * ─────────────────────────────────────────────────────────────────────────── */
-
-const BLADES = 6;
-
-/**
- * A camera iris.
- *
- * Six blades on a shared pivot. `openness` drives how far each blade retracts,
- * so the same component works as a slow idle loop or bound to scroll progress.
- */
-export function Aperture({
-    className = "",
-    openness,
-    spin = true,
-}: {
-    className?: string;
-    /** 0 closed, 1 wide open. Omit for a slow breathing loop. */
-    openness?: MotionValue<number>;
-    spin?: boolean;
-}) {
-    const reduced = useReducedMotion();
-
-    return (
-        <motion.svg
-            viewBox="-120 -120 240 240"
-            className={className}
-            aria-hidden="true"
-            animate={reduced || !spin ? undefined : { rotate: 360 }}
-            transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
-        >
-            <defs>
-                <linearGradient id="aperture-blade" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--foreground)" stopOpacity="0.16" />
-                    <stop offset="100%" stopColor="var(--foreground)" stopOpacity="0.03" />
-                </linearGradient>
-                <radialGradient id="aperture-core">
-                    <stop offset="0%" stopColor="var(--key-light)" stopOpacity="0.55" />
-                    <stop offset="55%" stopColor="var(--primary)" stopOpacity="0.22" />
-                    <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
-                </radialGradient>
-            </defs>
-
-            {/* The light coming through the opening. */}
-            <circle r="66" fill="url(#aperture-core)" />
-
-            {Array.from({ length: BLADES }, (_, index) => (
-                <motion.g
-                    key={index}
-                    style={{ rotate: (360 / BLADES) * index }}
-                    animate={
-                        reduced || openness
-                            ? undefined
-                            : { y: [0, -13, 0], opacity: [0.9, 1, 0.9] }
-                    }
-                    transition={{
-                        duration: 9,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: index * 0.14,
-                    }}
-                >
-                    <motion.path
-                        d="M 0 -104 L 90 -52 L 0 -30 L -90 -52 Z"
-                        fill="url(#aperture-blade)"
-                        stroke="var(--foreground)"
-                        strokeOpacity="0.22"
-                        strokeWidth="1"
-                        style={openness ? { y: openness } : undefined}
-                    />
-                </motion.g>
-            ))}
-
-            <circle
-                r="104"
-                fill="none"
-                stroke="var(--foreground)"
-                strokeOpacity="0.18"
-                strokeWidth="1"
-            />
-            <circle
-                r="112"
-                fill="none"
-                stroke="var(--foreground)"
-                strokeOpacity="0.08"
-                strokeWidth="1"
-                strokeDasharray="2 8"
-            />
-        </motion.svg>
     );
 }
 

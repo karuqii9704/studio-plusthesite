@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
-import { Aperture } from "../visuals";
+import { WaveForm } from "../WaveForm";
 import type { LandingCopy } from "../copy";
 
 /**
@@ -78,8 +78,9 @@ function RevealParagraph({
 /**
  * The principles section.
  *
- * The iris above the text opens as the paragraph reveals itself, which ties the
- * two together: the aperture is literally letting the statement in.
+ * The wave above the text is driven by the same scroll value that reveals the
+ * paragraph, so the form crests exactly as the statement lands. One input, two
+ * outputs - the motion is the reading, not decoration beside it.
  */
 export function LandingCraft({ copy }: { copy: LandingCopy }) {
     const ref = useRef<HTMLElement>(null);
@@ -88,9 +89,9 @@ export function LandingCraft({ copy }: { copy: LandingCopy }) {
         offset: ["start 0.92", "end 0.55"],
     });
 
-    const bladeLift = useTransform(scrollYProgress, [0, 0.55], [0, -30]);
-    const irisScale = useTransform(scrollYProgress, [0, 0.6], [0.86, 1.04]);
-    const irisOpacity = useTransform(scrollYProgress, [0, 0.25, 1], [0.35, 0.7, 0.55]);
+    // The wave crests as the statement reveals itself, so scrolling drives both.
+    const wavePhase = useTransform(scrollYProgress, [0, 1], [0, 0.85]);
+    const waveOpacity = useTransform(scrollYProgress, [0, 0.3, 1], [0.3, 0.8, 0.6]);
 
     return (
         <section
@@ -100,15 +101,11 @@ export function LandingCraft({ copy }: { copy: LandingCopy }) {
         >
             <div className="mx-auto max-w-4xl">
                 <motion.div
-                    style={{ scale: irisScale, opacity: irisOpacity }}
-                    className="mx-auto w-[46vw] max-w-[320px]"
+                    style={{ opacity: waveOpacity }}
+                    className="mx-auto h-[28vh] max-h-[260px] w-full"
                     aria-hidden="true"
                 >
-                    <Aperture
-                        className="h-full w-full text-foreground"
-                        openness={bladeLift}
-                        spin={false}
-                    />
+                    <WaveForm drive={wavePhase} />
                 </motion.div>
 
                 <RevealParagraph

@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { StageBackdrop, Aperture } from "../visuals";
+import { StageBackdrop } from "../visuals";
+import { WaveForm } from "../WaveForm";
 import { withPlus } from "../text";
 import type { LandingCopy } from "../copy";
 
@@ -41,13 +42,39 @@ export function LandingHero({
         <section id="hero" className="relative flex min-h-screen flex-col overflow-hidden">
             <StageBackdrop />
 
-            {/* The iris sits off-centre behind the copy, as set dressing. */}
+            {/*
+              * The wave occupies the upper band and is masked out before it
+              * reaches the copy. Without the mask its highlight runs to near
+              * full opacity directly behind the headline, which on a dark
+              * ground is white type on a white form.
+              */}
             <div
-                className="pointer-events-none absolute right-[-22%] top-[6%] w-[70vw] max-w-[640px] opacity-40 md:right-[-6%] md:top-[4%] md:w-[38vw]"
+                className="pointer-events-none absolute inset-x-0 top-0 h-[52vh] md:h-[56vh]"
+                style={{
+                    maskImage:
+                        "linear-gradient(to bottom, transparent 0%, #000 15%, #000 55%, transparent 88%)",
+                    WebkitMaskImage:
+                        "linear-gradient(to bottom, transparent 0%, #000 15%, #000 55%, transparent 88%)",
+                }}
                 aria-hidden="true"
             >
-                <Aperture className="h-full w-full text-foreground" />
+                <WaveForm />
             </div>
+
+            {/*
+              * Scrim. The mask alone is not enough: how far the wave reaches
+              * depends on viewport height, and the copy block does not. This
+              * settles the lower half back to the ground colour so the headline
+              * always has one to sit on.
+              */}
+            <div
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-[64%]"
+                style={{
+                    background:
+                        "linear-gradient(to top, var(--background) 0%, var(--background) 38%, color-mix(in srgb, var(--background) 70%, transparent) 62%, transparent 100%)",
+                }}
+                aria-hidden="true"
+            />
 
             <div className="relative z-10 flex flex-1 items-end justify-center px-6 pb-14 pt-28 md:pb-16">
                 <div className="flex w-full max-w-4xl flex-col items-center text-center">
