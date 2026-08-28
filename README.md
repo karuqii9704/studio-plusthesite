@@ -9,7 +9,9 @@ process in front for the Gemini proxy and static hosting.
 ## Layout
 
 ```
-server/index.js             Express: /api/ai proxy + static host for dist/
+server/ai.js                The Gemini proxy logic, host-agnostic
+server/index.js             Express entry: /api/ai + static host (VPS)
+api/ai.js                   Vercel serverless entry for the same logic
 src/index.css               The whole design system - tokens, palette, surfaces
 src/components/PlusLogo.tsx The animated mark, wordmark, and inline word
 src/components/StudioWord.tsx The word "Studio" as a drawn lockup
@@ -131,7 +133,31 @@ Server only (never bundled):
 | `PORT` | Defaults to 8787 |
 | `ALLOWED_ORIGINS` | Only needed for split deploys; same-origin needs no CORS |
 
-## Deploying to the VPS
+## Deploying
+
+Two hosts are supported. The Gemini logic lives in `server/ai.js` and both
+entry points are thin adapters over it, so they cannot drift apart.
+
+### Vercel
+
+Push to `main` and Vercel builds it. `vercel.json` pins the Vite preset and
+sends everything that is not `/api/*` to `index.html`; `api/ai.js` and
+`api/health.js` run as Node functions.
+
+Set these in **Project Settings → Environment Variables**, then redeploy - the
+`VITE_*` ones are read at build time, so changing them needs a new build:
+
+| Variable | Scope |
+| --- | --- |
+| `GEMINI_API_KEY` | server only, never expose |
+| `VITE_SUPABASE_URL` | build time, public |
+| `VITE_SUPABASE_ANON_KEY` | build time, public |
+| `VITE_MAIN_SITE_URL` | build time, public |
+
+Check `/api/health` after deploying: `{"ok":true,"ai":true}` means the key
+landed. `ai:false` means the function runs but `GEMINI_API_KEY` is missing.
+
+### VPS
 
 ```bash
 npm ci
@@ -142,8 +168,11 @@ GEMINI_API_KEY=... PORT=8787 node server/index.js
 One process serves both the built SPA and `/api/ai`, with a history fallback for
 deep links. Put nginx in front for TLS and point `studio.plusthe.site` at it.
 
-The rate limiter in `server/index.js` is in-memory and per-process. Move it to
-Redis the day this runs on more than one node.
+### Rate limiting
+
+The limiter is in-memory. On the VPS that is a real per-process limit; on Vercel
+it only holds within one warm instance, so treat it as a speed bump rather than
+a control. Move it to Redis or Vercel KV if the endpoint ever needs a real one.
 
 ## Known follow-ups
 
