@@ -17,13 +17,22 @@ import {
 import { KOL } from "@/types";
 import { supabase } from "@/lib/supabase";
 
+interface ShortlistKol {
+    id: string;
+    name: string;
+    handle: string;
+    price: number;
+    followers_int: number | null;
+}
+
 interface ShortlistRow {
     id: string;
-    kol_id: string;
-    kol_name: string;
-    handle: string | null;
     status: string;
+    /** supabase-js to-one embeds arrive as arrays. */
+    kol: ShortlistKol[] | null;
 }
+
+const firstKol = (row: ShortlistRow): ShortlistKol | null => row.kol?.[0] ?? null;
 
 const rp = (n: number) => `Rp ${n.toLocaleString("id-ID")}`;
 
@@ -48,7 +57,7 @@ export const ViewKOL: React.FC<{
         }
         const { data } = await supabase
             .from("studio_kols")
-            .select("id, name, handle, category, followers, er, price, tags, verified")
+            .select("id, name, handle, category, followers_int, er_num, price, tags, verified")
             .order("created_at", { ascending: true });
         if (data) setKols(data as KOL[]);
         setKolsLoading(false);
@@ -69,7 +78,7 @@ export const ViewKOL: React.FC<{
         if (!session?.user) return;
         const { data } = await supabase
             .from("studio_kol_shortlist")
-            .select("id, kol_id, kol_name, handle, status")
+            .select("id, status, kol:kol_uuid(id, name, handle, price, followers_int)")
             .order("created_at", { ascending: false });
         if (data) setShortlist(data as ShortlistRow[]);
     }, []);
@@ -81,7 +90,7 @@ export const ViewKOL: React.FC<{
         return () => clearTimeout(timer);
     }, [loadShortlist]);
 
-    const savedIds = new Set(shortlist.map((item) => item.kol_id));
+    const savedIds = new Set(shortlist.map((item) => firstKol(item)?.id).filter(Boolean) as string[]);
 
     const handleContact = async (kol: KOL) => {
         if (!supabase) {
@@ -104,13 +113,11 @@ export const ViewKOL: React.FC<{
             .insert([
                 {
                     user_id: session.user.id,
-                    kol_id: String(kol.id),
-                    kol_name: kol.name,
-                    handle: kol.handle,
+                    kol_uuid: kol.id,
                     status: "contacted",
                 },
             ])
-            .select("id, kol_id, kol_name, handle, status")
+            .select("id, status, kol:kol_uuid(id, name, handle, price, followers_int)")
             .single();
         if (error) {
             addNotification("error", "Gagal menyimpan, coba lagi.");
@@ -129,12 +136,13 @@ export const ViewKOL: React.FC<{
     };
 
     const briefRows = shortlist.map((item) => {
-        const kol = kols.find((candidate) => String(candidate.id) === item.kol_id);
+        const joined = firstKol(item);
+        const kol = kols.find((candidate) => candidate.id === joined?.id);
         return {
-            name: item.kol_name,
-            handle: item.handle ?? "",
-            price: kol?.price ?? 0,
-            followers: kol?.followers ?? "-",
+            name: joined?.name ?? "-",
+            handle: joined?.handle ?? "",
+            price: joined?.price ?? kol?.price ?? 0,
+            followers: joined?.followers_int ?? kol?.followers_int ?? 0,
         };
     });
 
@@ -213,14 +221,14 @@ export const ViewKOL: React.FC<{
                                 className="flex items-center gap-3 bg-surface border border-border rounded-xl p-3 group"
                             >
                                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-xs font-bold text-white uppercase shrink-0">
-                                    {item.kol_name?.substring(0, 2)}
+                                    {firstKol(item)?.name?.substring(0, 2)}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-bold text-foreground truncate">
-                                        {item.kol_name}
+                                        {firstKol(item)?.name}
                                     </p>
                                     <p className="text-[10px] text-primary truncate">
-                                        {item.handle}
+                                        {firstKol(item)?.handle}
                                     </p>
                                 </div>
                                 <span className="text-[9px] uppercase font-bold text-tertiary bg-tertiary/10 px-2 py-0.5 rounded-full shrink-0">
@@ -373,7 +381,7 @@ export const ViewKOL: React.FC<{
                                             Followers
                                         </p>
                                         <p className="text-foreground font-bold text-sm">
-                                            {kol.followers}
+                                            {kol.followers_int !== null ? kol.followers_int.toLocaleString("id-ID") : "-"}
                                         </p>
                                     </div>
                                     <div className="text-center border-l border-border">
@@ -381,7 +389,7 @@ export const ViewKOL: React.FC<{
                                             ER
                                         </p>
                                         <p className="text-tertiary font-bold text-sm">
-                                            {kol.er}
+                                            {kol.er_num !== null ? `${kol.er_num}%` : "-"}
                                         </p>
                                     </div>
                                 </div>

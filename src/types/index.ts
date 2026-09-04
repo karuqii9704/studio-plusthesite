@@ -23,8 +23,9 @@ export interface KOL {
   name: string;
   handle: string;
   category: string;
-  followers: string;
-  er: string;
+  /** ERD v2: numeric columns (legacy text followers/er dropped). */
+  followers_int: number | null;
+  er_num: number | null;
   price: number;
   tags: string[];
   verified: boolean;
