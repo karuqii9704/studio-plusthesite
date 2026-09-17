@@ -617,9 +617,18 @@ h1, h2, h3 {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/**
+ * The TWO hero headline lines.
+ *
+ * The fade is deliberately gone: `animation-fill-mode: both` applies the 0%
+ * keyframe during the delay, so an `opacity: 0` start left the largest element
+ * on the page invisible for the whole choreography. Measured on this page:
+ * LCP 2492 ms -> 732 ms with the fade removed, same element, CLS unchanged.
+ * The rise still reads as a mask reveal because .headline-line clips it.
+ */
 @keyframes in-mask {
-    from { opacity: 0; transform: translateY(40%); }
-    to { opacity: 1; transform: translateY(0); }
+    from { transform: translateY(40%); }
+    to { transform: translateY(0); }
 }
 
 @keyframes in-pop {
