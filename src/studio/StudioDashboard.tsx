@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import {
   User,
@@ -26,17 +26,12 @@ import { ToastContainer } from "@/studio/ui/ToastContainer";
 import { InteractiveTour } from "@/studio/ui/InteractiveTour";
 import { SidebarItem } from "@/studio/ui/SidebarItem";
 import { DocumentationModal } from "@/studio/docs/DocumentationModal";
-import { ViewPlanner } from "@/studio/views/core/ViewPlanner";
-import { ViewGenerator } from "@/studio/views/core/ViewGenerator";
-import { ViewStrategy } from "@/studio/views/core/ViewStrategy";
-import { ViewRepurpose } from "@/studio/views/core/ViewRepurpose";
-import { ViewLiveStream } from "@/studio/views/growth/ViewLiveStream";
-import { ViewKOL } from "@/studio/views/growth/ViewKOL";
-import { ViewSubscription } from "@/studio/views/growth/ViewSubscription";
-import { ViewAnalytics } from "@/studio/views/growth/ViewAnalytics";
+import { ViewErrorFallback } from "@/studio/ui/ViewErrorFallback";
+import { DEFAULT_TAB, getStudioView } from "@/studio/views/registry";
 import { TOUR_STEPS } from "@/lib/studioData";
 import { Notification } from "@/types";
 import { useTheme } from "@/components/ThemeProvider";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Logo from "@/components/Logo";
 
 type NotifLogItem = {
@@ -117,6 +112,15 @@ const TAB_META: Record<
   },
 };
 
+/** Shown while a tab's chunk is still on the wire. */
+function ViewLoading() {
+  return (
+    <div className="flex min-h-[40vh] items-center justify-center">
+      <span className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-foreground" />
+    </div>
+  );
+}
+
 export const StudioDashboard: React.FC<{
   onLogout: () => void;
   user?: SupabaseUser | null;
@@ -130,7 +134,7 @@ export const StudioDashboard: React.FC<{
     user?.email?.split("@")[0] ||
     "Studio User";
   const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
-  const [activeTab, setActiveTab] = useState("planner");
+  const [activeTab, setActiveTab] = useState<string>(DEFAULT_TAB);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [notifLog, setNotifLog] = useState<NotifLogItem[]>([]);
@@ -198,27 +202,21 @@ export const StudioDashboard: React.FC<{
   };
 
   const renderContent = () => {
-    const props = { addNotification };
-    switch (activeTab) {
-      case "planner":
-        return <ViewPlanner {...props} />;
-      case "generator":
-        return <ViewGenerator {...props} />;
-      case "strategy":
-        return <ViewStrategy {...props} />;
-      case "repurpose":
-        return <ViewRepurpose {...props} />;
-      case "livestream":
-        return <ViewLiveStream {...props} />;
-      case "analytics":
-        return <ViewAnalytics />;
-      case "kol":
-        return <ViewKOL {...props} />;
-      case "subscription":
-        return <ViewSubscription {...props} />;
-      default:
-        return <ViewPlanner {...props} />;
-    }
+    const ActiveView = getStudioView(activeTab);
+    return (
+      // Switching tabs remounts the boundary, so a view that crashed is not
+      // replaced by the fallback forever - the next tab starts clean.
+      <ErrorBoundary
+        key={activeTab}
+        fallback={({ error, reset }) => (
+          <ViewErrorFallback error={error} reset={reset} />
+        )}
+      >
+        <Suspense fallback={<ViewLoading />}>
+          <ActiveView addNotification={addNotification} />
+        </Suspense>
+      </ErrorBoundary>
+    );
   };
 
   return (
