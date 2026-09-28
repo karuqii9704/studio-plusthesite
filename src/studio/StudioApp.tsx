@@ -1,6 +1,8 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { supabase } from "@/lib/supabase";
+import { ViewErrorFallback } from "./ui/ViewErrorFallback";
 import { StudioLanding } from "./landing/StudioLanding";
 
 /**
@@ -80,23 +82,53 @@ export default function StudioApp() {
 
     if (view === "login") {
         return (
-            <Suspense fallback={<ChunkFallback />}>
-                <StudioLogin
-                    initialEmail={prefillEmail}
-                    onLoginSuccess={() => setView("app")}
-                    onBack={() => setView("landing")}
-                />
-            </Suspense>
+            <ErrorBoundary
+                fallback={({ error, reset }) => (
+                    <ViewErrorFallback
+                        error={error}
+                        reset={reset}
+                        onHome={() => setView("landing")}
+                    />
+                )}
+            >
+                <Suspense fallback={<ChunkFallback />}>
+                    <StudioLogin
+                        initialEmail={prefillEmail}
+                        onLoginSuccess={() => setView("app")}
+                        onBack={() => setView("landing")}
+                    />
+                </Suspense>
+            </ErrorBoundary>
         );
     }
 
     if (view === "app") {
         return (
-            <Suspense fallback={<ChunkFallback />}>
-                <StudioDashboard onLogout={handleLogout} user={user} />
-            </Suspense>
+            // A crash inside the workspace - a broken view, a failed chunk -
+            // stays here: the landing page and the session survive it.
+            <ErrorBoundary
+                fallback={({ error, reset }) => (
+                    <ViewErrorFallback
+                        error={error}
+                        reset={reset}
+                        onHome={() => setView("landing")}
+                    />
+                )}
+            >
+                <Suspense fallback={<ChunkFallback />}>
+                    <StudioDashboard onLogout={handleLogout} user={user} />
+                </Suspense>
+            </ErrorBoundary>
         );
     }
 
-    return <StudioLanding onStart={openLogin} onLoginClick={() => openLogin()} />;
+    return (
+        <ErrorBoundary
+            fallback={({ error, reset }) => (
+                <ViewErrorFallback error={error} reset={reset} />
+            )}
+        >
+            <StudioLanding onStart={openLogin} onLoginClick={() => openLogin()} />
+        </ErrorBoundary>
+    );
 }
