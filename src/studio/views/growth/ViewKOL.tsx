@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { KOL } from "@/types";
 import { supabase } from "@/lib/supabase";
+import { formatCurrency, formatNumber } from "@/lib/format";
+import { useLocale } from "@/i18n/I18nProvider";
 
 interface ShortlistKol {
     id: string;
@@ -34,11 +36,19 @@ interface ShortlistRow {
 
 const firstKol = (row: ShortlistRow): ShortlistKol | null => row.kol?.[0] ?? null;
 
-const rp = (n: number) => `Rp ${n.toLocaleString("id-ID")}`;
+/**
+ * The brief is Indonesian outreach copy that gets pasted into WhatsApp or
+ * email, so it keeps the canonical rupiah notation whatever the studio's own
+ * language is set to. On-screen amounts go through `displayRp` instead.
+ */
+const rp = (n: number) => formatCurrency(n, "id");
 
 export const ViewKOL: React.FC<{
     addNotification: (t: "success" | "error", m: string) => void;
 }> = ({ addNotification }) => {
+    const locale = useLocale();
+    /** On screen, the reader's notation; in the copied brief, see `copyBrief`. */
+    const displayRp = (n: number) => formatCurrency(n, locale);
     const [filters, setFilters] = useState({
         cat: "All",
         price: "All",
@@ -381,7 +391,7 @@ export const ViewKOL: React.FC<{
                                             Followers
                                         </p>
                                         <p className="text-foreground font-bold text-sm">
-                                            {kol.followers_int !== null ? kol.followers_int.toLocaleString("id-ID") : "-"}
+                                            {kol.followers_int !== null ? formatNumber(kol.followers_int, locale) : "-"}
                                         </p>
                                     </div>
                                     <div className="text-center border-l border-border">
@@ -399,7 +409,7 @@ export const ViewKOL: React.FC<{
                                             Mulai dari
                                         </p>
                                         <p className="text-foreground font-bold">
-                                            {rp(kol.price)}
+                                            {displayRp(kol.price)}
                                         </p>
                                     </div>
                                     <button
@@ -462,7 +472,7 @@ export const ViewKOL: React.FC<{
                                         <Wallet size={12} /> Estimasi Budget
                                     </p>
                                     <p className="mt-1 text-2xl font-black text-primary">
-                                        {rp(totalBudget)}
+                                        {displayRp(totalBudget)}
                                     </p>
                                 </div>
                             </div>
@@ -484,7 +494,7 @@ export const ViewKOL: React.FC<{
                                             </p>
                                         </div>
                                         <p className="text-xs font-bold text-foreground shrink-0">
-                                            {rp(item.price)}
+                                            {displayRp(item.price)}
                                         </p>
                                     </div>
                                 ))}

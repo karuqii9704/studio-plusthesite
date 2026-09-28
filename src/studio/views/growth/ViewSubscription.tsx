@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Check, Calculator, ShoppingCart } from "lucide-react";
 import { PLANS, ALACARTE_FEATURES } from "@/lib/studioData";
 import { MAIN_SITE_URL } from "@/lib/site";
+import { formatCurrency } from "@/lib/format";
 import { useLocale } from "@/i18n/I18nProvider";
 
 export const ViewSubscription: React.FC<{
@@ -25,12 +26,7 @@ export const ViewSubscription: React.FC<{
             0
         );
 
-    const formatPrice = (price: number) =>
-        new Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            minimumFractionDigits: 0,
-        }).format(price);
+    const formatPrice = (price: number) => formatCurrency(price, locale);
 
     return (
         <div className="animate-in fade-in space-y-12 pb-24 duration-500">
@@ -178,7 +174,13 @@ export const ViewSubscription: React.FC<{
                             disabled={calculateTotal() === 0}
                             onClick={() => {
                                 addNotification("success", "Paket Custom aktif!");
-                                goToPayment("Paket Custom", `${formatPrice(calculateTotal())}/bln`);
+                                // Handoff text stays in canonical rupiah notation:
+                                // checkout lives on the marketing site, which is
+                                // priced in IDR whatever the studio's locale is.
+                                goToPayment(
+                                    "Paket Custom",
+                                    `${formatCurrency(calculateTotal(), "id")}/bln`
+                                );
                             }}
                             className="w-full rounded-xl bg-primary py-3 font-bold text-white shadow-lg transition-colors hover:bg-primary-dark disabled:opacity-50"
                         >
