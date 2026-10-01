@@ -27,6 +27,7 @@ import { InteractiveTour } from "@/studio/ui/InteractiveTour";
 import { SidebarItem } from "@/studio/ui/SidebarItem";
 import { DocumentationModal } from "@/studio/docs/DocumentationModal";
 import { ViewErrorFallback } from "@/studio/ui/ViewErrorFallback";
+import { ViewSkeleton } from "@/studio/ui/ViewSkeleton";
 import { DEFAULT_TAB, getStudioView } from "@/studio/views/registry";
 import { TOUR_STEPS } from "@/lib/studioData";
 import { Notification } from "@/types";
@@ -113,14 +114,6 @@ const TAB_META: Record<
 };
 
 /** Shown while a tab's chunk is still on the wire. */
-function ViewLoading() {
-  return (
-    <div className="flex min-h-[40vh] items-center justify-center">
-      <span className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-foreground" />
-    </div>
-  );
-}
-
 export const StudioDashboard: React.FC<{
   onLogout: () => void;
   user?: SupabaseUser | null;
@@ -212,7 +205,7 @@ export const StudioDashboard: React.FC<{
           <ViewErrorFallback error={error} reset={reset} />
         )}
       >
-        <Suspense fallback={<ViewLoading />}>
+        <Suspense fallback={<ViewSkeleton tab={activeTab} />}>
           <ActiveView addNotification={addNotification} />
         </Suspense>
       </ErrorBoundary>
