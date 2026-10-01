@@ -229,7 +229,7 @@ export const ViewAnalytics = () => {
 
     return (
         <div className="space-y-6 pb-24 animate-in fade-in duration-500">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div id="analytics-stats" className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {cards.map((card, index) => (
                     <div
                         key={index}
@@ -249,7 +249,7 @@ export const ViewAnalytics = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                <div className="lg:col-span-3 bg-card-bg border border-border p-6 rounded-2xl shadow-xl transition-colors">
+                <div id="analytics-chart" className="lg:col-span-3 bg-card-bg border border-border p-6 rounded-2xl shadow-xl transition-colors">
                     <h3 className="font-bold text-foreground flex items-center gap-2">
                         <BarChart3 size={18} className="text-primary" />
                         Skor Viral - Analisis Terakhir

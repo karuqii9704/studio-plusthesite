@@ -185,6 +185,7 @@ Aturan:
 
                 <div className="bg-surface p-1 rounded-xl border border-border focus-within:border-primary/50 transition-colors relative">
                     <textarea
+                        id="repurpose-idea"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Misal: Promo kopi susu gula aren beli 2 gratis 1, berlaku akhir pekan ini di kedai kami…"
@@ -200,7 +201,7 @@ Aturan:
                             <button key={tn} onClick={() => setTone(tn)} className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${tone === tn ? 'bg-primary/10 border-primary text-primary shadow-sm' : 'bg-surface border-border text-muted hover:text-foreground hover:border-muted-light'}`}>{tn}</button>
                         ))}
                     </div>
-                    <button onClick={handleRepurpose} disabled={loading || !input.trim()} className="bg-gradient-to-r from-primary to-primary-light text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg flex items-center justify-center gap-2 hover:brightness-110 transition-all disabled:opacity-60 disabled:cursor-not-allowed shrink-0">
+                    <button id="repurpose-btn" onClick={handleRepurpose} disabled={loading || !input.trim()} className="bg-gradient-to-r from-primary to-primary-light text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg flex items-center justify-center gap-2 hover:brightness-110 transition-all disabled:opacity-60 disabled:cursor-not-allowed shrink-0">
                         {loading ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />} Repurpose
                     </button>
                 </div>

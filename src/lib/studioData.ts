@@ -16,6 +16,22 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     kol: [
         { targetId: "kol-filter", title: "1. Smart Filter", desc: "Cari KOL berdasarkan budget (Micro/Macro) dan kategori.", position: "bottom" },
         { targetId: "kol-list", title: "2. Database KOL", desc: "Pilih influencer yang sudah terverifikasi.", position: "top" }
+    ],
+    strategy: [
+        { targetId: "strat-input", title: "1. Tulis Caption", desc: "Tulis caption kasar Anda; AI menilai skor viralnya.", position: "bottom" },
+        { targetId: "strat-btn", title: "2. Check Score", desc: "Lihat prediksi skor sebelum konten diposting.", position: "top" }
+    ],
+    repurpose: [
+        { targetId: "repurpose-idea", title: "1. Satu Ide", desc: "Tulis satu ide; AI memecahnya ke empat platform.", position: "bottom" },
+        { targetId: "repurpose-btn", title: "2. Repurpose", desc: "Hasilkan paket caption Instagram, TikTok, X, dan WhatsApp.", position: "top" }
+    ],
+    analytics: [
+        { targetId: "analytics-stats", title: "1. Ringkasan", desc: "Kampanye, konten, skor viral, dan KOL Anda dalam satu baris.", position: "bottom" },
+        { targetId: "analytics-chart", title: "2. Skor Viral", desc: "Tren analisis terakhir dari AI ada di sini.", position: "top" }
+    ],
+    subscription: [
+        { targetId: "sub-plans", title: "1. Paket Langganan", desc: "Bandingkan paket studio dan fitur yang didapat.", position: "bottom" },
+        { targetId: "sub-calculator", title: "2. Kalkulator", desc: "Hitung kebutuhan langganan sebelum memilih paket.", position: "top" }
     ]
 };
 
