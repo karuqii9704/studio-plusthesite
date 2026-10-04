@@ -1,7 +1,7 @@
-import { Suspense, lazy, useEffect, useState } from "react";
-import type { User } from "@supabase/supabase-js";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { supabase } from "@/lib/supabase";
+import { hasSessionToRestore, loadSupabase } from "@/lib/session";
 import { ViewErrorFallback } from "./ui/ViewErrorFallback";
 import { StudioLanding } from "./landing/StudioLanding";
 
@@ -43,34 +43,48 @@ export default function StudioApp() {
     });
     const [user, setUser] = useState<User | null>(null);
     const [prefillEmail, setPrefillEmail] = useState("");
+    const clientRef = useRef<SupabaseClient | null>(null);
 
     useEffect(() => {
-        if (!supabase) return;
+        // Nothing to restore: the landing stays on screen and the Supabase SDK
+        // is never fetched. See lib/session.ts for what counts as a session.
+        if (!hasSessionToRestore()) return;
 
-        void supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) {
+        let active = true;
+        let unsubscribe: (() => void) | undefined;
+
+        void loadSupabase().then((client) => {
+            if (!client || !active) return;
+            clientRef.current = client;
+
+            void client.auth.getSession().then(({ data: { session } }) => {
+                if (!active || !session) return;
                 setUser(session.user);
                 setView("app");
-            }
+            });
+
+            const { data } = client.auth.onAuthStateChange((_event, session) => {
+                if (!active) return;
+                if (session) {
+                    setUser(session.user);
+                    setView("app");
+                } else {
+                    setUser(null);
+                    setView("landing");
+                }
+            });
+            unsubscribe = () => data.subscription.unsubscribe();
         });
 
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            if (session) {
-                setUser(session.user);
-                setView("app");
-            } else {
-                setUser(null);
-                setView("landing");
-            }
-        });
-
-        return () => subscription.unsubscribe();
+        return () => {
+            active = false;
+            unsubscribe?.();
+        };
     }, []);
 
     const handleLogout = async () => {
-        await supabase?.auth.signOut();
+        const client = clientRef.current ?? (await loadSupabase());
+        await client?.auth.signOut();
         setUser(null);
         setView("landing");
     };
